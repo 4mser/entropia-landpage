@@ -3,7 +3,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion, Variants } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { Icon } from '@iconify/react';
+import type { IconifyIcon } from '@iconify/types';
 
 /* ===================== Iconos locales (sin pop-in) ===================== */
 /* Subitems */
@@ -57,7 +59,7 @@ type Section = {
 /* ————————————————————————————————————————————————————————————————
    ICON MAP: convierte 'mdi:*' en objeto de icono (sin fetch)
 ——————————————————————————————————————————————————————————————— */
-const ICONS: Record<string, any> = {
+const ICONS: Record<string, IconifyIcon> = {
   'mdi:account-group': accountGroup,
   'mdi:star': star,
   'mdi:account-multiple': accountMultiple,
@@ -90,7 +92,7 @@ const ICONS: Record<string, any> = {
   'mdi:circle-small': circleSmall,
 };
 
-const getIcon = (name?: string) => (name && ICONS[name]) || circleSmall;
+const getIcon = (name?: string): IconifyIcon => (name && ICONS[name]) || circleSmall;
 
 /* ————————————————————————————————————————————————————————————————
    ICONOS por defecto para subitems (extensible)
@@ -297,7 +299,7 @@ const MenuMov: React.FC<MenuMovProps> = ({ menuOpen, toggleMenu }) => {
   }, []);
 
   const handleDragEnd = useCallback(
-    (_: any, info: { offset: { y: number } }) => {
+    (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       if (info.offset.y > 60) toggleMenu();
     },
     [toggleMenu]
@@ -330,7 +332,7 @@ const MenuMov: React.FC<MenuMovProps> = ({ menuOpen, toggleMenu }) => {
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0.04}
             onDragEnd={handleDragEnd}
-            className="absolute inset-0 h-[100dvh] w-screen"
+            className="absolute inset-0 h={[`100dvh` as unknown as number] ? '100dvh' : '100vh'} w-screen"
           >
             {/* Fondo y layout */}
             <div

@@ -7,8 +7,6 @@ import ContactSection from './ContactSection';
 import Footer from './Footer';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ServicesSection from './ServicesSection';
-import RLab from '../Rlab';
 
 gsap.registerPlugin(ScrollTrigger);
 
