@@ -49,8 +49,21 @@ const TeamSection: React.FC<TeamSectionProps> = ({ windowWidth }) => {
 
   // Helper para recalcular altura al terminar de cargar imágenes
   const onImgLoaded = () => {
-    // fuerza un recalculo del resize listener
     window.dispatchEvent(new Event('resize'));
+  };
+
+  // ====== CLASE DE IMAGEN: en desktop -> B/N hasta hover; en mobile -> según activeIndex ======
+  const imgClass = (index: number) => {
+    const base =
+      'h-full min-h-56 max-h-full flex-1 object-cover transition duration-500 ease-in-out will-change-[filter]';
+    const isDesktop = windowWidth >= 1024;
+
+    if (isDesktop) {
+      // lg+: siempre en gris; se colorea al hover del card (.group)
+      return `${base} lg:grayscale lg:group-hover:grayscale-0`;
+    }
+    // mobile/tablet: tu comportamiento original por slide activo
+    return `${base} ${activeIndex === index ? 'grayscale-0' : 'grayscale'}`;
   };
 
   return (
@@ -92,19 +105,15 @@ const TeamSection: React.FC<TeamSectionProps> = ({ windowWidth }) => {
               >
                 {index % 2 === 0 ? (
                   <>
-                    {/* Texto (auto) */}
+                    {/* Texto */}
                     <div className="text-white mb-5">
                       <div className="flex items-center flex-wrap mb-2">
                         <h3 className="animated-text text-3xl font-semibold whitespace-nowrap mr-3">{member.name}</h3>
                         <p className="animated-text text-sm border border-white/40 w-fit px-2 rounded-md text-center">{member.role}</p>
                       </div>
-
-                      {/* Descripción SIEMPRE visible */}
                       <div className="transition-all duration-300 ease-in-out">
                         <p className="animated-text text-xs text-white/90">{member.description}</p>
                       </div>
-
-                      {/* Skills */}
                       <div className="flex flex-wrap gap-2 mt-4">
                         {member.skills?.map((skill, i) => (
                           <span key={i} className="text-white/80 text-[11px] px-3 py-1 rounded-full border border-white/20 backdrop-blur-sm">{skill}</span>
@@ -112,7 +121,7 @@ const TeamSection: React.FC<TeamSectionProps> = ({ windowWidth }) => {
                       </div>
                     </div>
 
-                    {/* Imagen (flex-1 rellena el alto sobrante) */}
+                    {/* Imagen */}
                     {hasImage && (
                       <Image
                         src={member.image}
@@ -120,17 +129,13 @@ const TeamSection: React.FC<TeamSectionProps> = ({ windowWidth }) => {
                         height={800}
                         alt={member.name}
                         onLoadingComplete={onImgLoaded}
-                        className={`h-full min-h-56 max-h-full flex-1 object-cover transition duration-500 ease-in-out ${
-                          windowWidth > 1024
-                            ? (activeIndex === index ? 'grayscale-0' : 'grayscale')
-                            : (activeIndex === index ? 'grayscale-0' : 'grayscale')
-                        }`}
+                        className={imgClass(index)}
                       />
                     )}
                   </>
                 ) : (
                   <>
-                    {/* Imagen primero (flex-1) */}
+                    {/* Imagen primero */}
                     {hasImage && (
                       <Image
                         src={member.image}
@@ -138,27 +143,19 @@ const TeamSection: React.FC<TeamSectionProps> = ({ windowWidth }) => {
                         height={800}
                         alt={member.name}
                         onLoadingComplete={onImgLoaded}
-                        className={`h-full min-h-56 max-h-full flex-1 object-cover transition duration-500 ease-in-out mb-5 ${
-                          windowWidth > 1024
-                            ? (activeIndex === index ? 'grayscale-0' : 'grayscale')
-                            : (activeIndex === index ? 'grayscale-0' : 'grayscale')
-                        }`}
+                        className={`${imgClass(index)} mb-5`}
                       />
                     )}
 
-                    {/* Texto (auto) */}
+                    {/* Texto */}
                     <div className="text-white">
                       <div className="flex items-center flex-wrap mb-2">
                         <h3 className="animated-text text-3xl font-semibold whitespace-nowrap mr-3">{member.name}</h3>
                         <p className="animated-text text-sm border border-white/40 w-fit px-2 rounded-md text-center">{member.role}</p>
                       </div>
-
-                      {/* Descripción SIEMPRE visible */}
                       <div className="transition-all duration-300 ease-in-out">
                         <p className="animated-text text-xs text-white/90">{member.description}</p>
                       </div>
-
-                      {/* Skills */}
                       <div className="flex flex-wrap gap-2 mt-4">
                         {member.skills?.map((skill, i) => (
                           <span key={i} className="text-white/80 text-[11px] px-3 py-1 rounded-full border border-white/20 backdrop-blur-sm">{skill}</span>
