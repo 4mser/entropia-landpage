@@ -332,7 +332,18 @@ const MenuMov: React.FC<MenuMovProps> = ({ menuOpen, toggleMenu }) => {
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0.04}
             onDragEnd={handleDragEnd}
-            className="absolute inset-0 h={[`100dvh` as unknown as number] ? '100dvh' : '100vh'} w-screen"
+            className="absolute inset-0 w-full"
+            style={{
+              // Fallbacks para distintos navegadores:
+              // - h-screen → 100vh tradicional
+              // - height → 100dvh (viewport dinámico, evita “barras” en móviles)
+              // - minHeight → 100svh (small viewport iOS)
+              // - WebkitFillAvailable como último recurso en iOS muy viejo
+              height: '100dvh',
+              minHeight: '100svh',
+              // @ts-expect-error: CSS prop no tipada en TS
+              WebkitHeight: '-webkit-fill-available',
+            }}
           >
             {/* Fondo y layout */}
             <div
@@ -349,14 +360,6 @@ const MenuMov: React.FC<MenuMovProps> = ({ menuOpen, toggleMenu }) => {
                   <p className="text-[11px] tracking-widest uppercase text-white/50">Navegación</p>
                   <h3 className="text-white font-semibold">Explora el sitio</h3>
                 </div>
-                {/* <button
-                  ref={closeBtnRef}
-                  onClick={toggleMenu}
-                  aria-label="Cerrar menú"
-                  className="p-2 rounded-xl border border-white/10 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60"
-                >
-                  <Icon icon={getIcon('mdi:close')} className="w-6 h-6 text-white/90" />
-                </button> */}
               </div>
 
               {/* Search */}
@@ -389,8 +392,6 @@ const MenuMov: React.FC<MenuMovProps> = ({ menuOpen, toggleMenu }) => {
               <div className="flex-1 min-h-0 overflow-y-auto px-2 pb-6">
                 {query ? (
                   <motion.ul variants={listParent} initial="hidden" animate="show" className="px-2 pt-2 space-y-1">
-                    {/* Resultados */}
-                    {/* Si no hay resultados */}
                     {flatResults.length === 0 && (
                       <li className="text-white/60 text-sm px-2 py-4">Sin resultados para “{query}”.</li>
                     )}
